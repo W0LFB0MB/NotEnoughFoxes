@@ -1,0 +1,6 @@
+{
+  "parent": "notenoughfoxes:item/template_fox_socks",
+  "textures": {
+    "layer1": "notenoughfoxes:item/socks/socks_stripes"
+  }
+}
