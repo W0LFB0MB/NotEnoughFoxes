@@ -1,16 +1,17 @@
 package com.w0lfb0mb.notenoughfoxes.init;
 
-import com.w0lfb0mb.notenoughfoxes.common.FoxCollarItem;
-import com.w0lfb0mb.notenoughfoxes.common.FoxSocksItem;
-import com.w0lfb0mb.notenoughfoxes.common.FoxSpawnEggItem;
+import com.w0lfb0mb.notenoughfoxes.common.items.FoxClothingItemTogglable;
+import com.w0lfb0mb.notenoughfoxes.common.items.FoxSpawnEggItem;
 import com.w0lfb0mb.notenoughfoxes.common.ModCreativeModeTab;
 import com.w0lfb0mb.notenoughfoxes.common.entity.Fox;
+import com.w0lfb0mb.notenoughfoxes.common.items.FoxClothingItem;
 import com.w0lfb0mb.notenoughfoxes.notenoughfoxes;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.HashMap;
 
 public class ItemInit {
 
@@ -80,148 +81,101 @@ public class ItemInit {
 
     public static final RegistryObject<Item> COLLAR_REMOVER = ITEMS.register("collar_remover", () -> new Item(
             new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-    public static final RegistryObject<Item> COLLAR_PURPLE = ITEMS.register("purple_collar", () -> new FoxCollarItem(
-            Fox.CC.PURPLE,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
+                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES_COLLARS)
                     .stacksTo(1)
     ));
 
-    public static final RegistryObject<Item> COLLAR_WHITE = ITEMS.register("white_collar", () -> new FoxCollarItem(
-            Fox.CC.WHITE,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
+    public static final HashMap<String, RegistryObject<FoxClothingItem>> FOX_COLLARS = new HashMap<String, RegistryObject<FoxClothingItem>>() {{
+        Fox.CC.loopThrough((Fox.CC cc) -> {
+            if (cc == Fox.CC.NONE) return;
+            put(cc.getName(), ITEMS.register(cc.getName()+"_collar", () -> new FoxClothingItem(
+                    new Fox.CC[]{cc},
+                    "collar",
+                    new Item.Properties()
+                            .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES_COLLARS)
+                            .stacksTo(16)
+            )));
 
-    public static final RegistryObject<Item> COLLAR_ORANGE = ITEMS.register("orange_collar", () -> new FoxCollarItem(
-            Fox.CC.ORANGE,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_MAGENTA = ITEMS.register("magenta_collar", () -> new FoxCollarItem(
-            Fox.CC.MAGENTA,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_LIGHT_BLUE = ITEMS.register("light_blue_collar", () -> new FoxCollarItem(
-            Fox.CC.LIGHT_BLUE,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_YELLOW = ITEMS.register("yellow_collar", () -> new FoxCollarItem(
-            Fox.CC.YELLOW,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_LIME = ITEMS.register("lime_collar", () -> new FoxCollarItem(
-            Fox.CC.LIME,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_PINK = ITEMS.register("pink_collar", () -> new FoxCollarItem(
-            Fox.CC.PINK,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_GRAY = ITEMS.register("gray_collar", () -> new FoxCollarItem(
-            Fox.CC.GRAY,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_LIGHT_GRAY = ITEMS.register("light_gray_collar", () -> new FoxCollarItem(
-            Fox.CC.LIGHT_GRAY,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_CYAN = ITEMS.register("cyan_collar", () -> new FoxCollarItem(
-            Fox.CC.CYAN,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_BLUE = ITEMS.register("blue_collar", () -> new FoxCollarItem(
-            Fox.CC.BLUE,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_GREEN = ITEMS.register("green_collar", () -> new FoxCollarItem(
-            Fox.CC.GREEN,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_RED = ITEMS.register("red_collar", () -> new FoxCollarItem(
-            Fox.CC.RED,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_BLACK = ITEMS.register("black_collar", () -> new FoxCollarItem(
-            Fox.CC.BLACK,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
-
-    public static final RegistryObject<Item> COLLAR_BROWN = ITEMS.register("brown_collar", () -> new FoxCollarItem(
-            Fox.CC.BROWN,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
+            Fox.CC.loopThrough((Fox.CC cc1) -> {
+                if (cc1 == Fox.CC.NONE || cc == cc1) return;
+                put(cc.getName() + "_" + cc1.getName(), ITEMS.register(cc.getName() + "_" + cc1.getName() + "_collar", () -> new FoxClothingItem(
+                        new Fox.CC[]{cc, cc1},
+                        "collar",
+                        new Item.Properties()
+                                .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES_COLLARS)
+                                .stacksTo(16)
+                )));
+            });
+        });
+    }};
 
     public static final RegistryObject<Item> SOCK_REMOVER = ITEMS.register("sock_remover", () -> new Item(
             new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
+                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES_SOCKS)
                     .stacksTo(1)
     ));
 
-    public static final RegistryObject<Item> SOCKS_PURPLE = ITEMS.register("purple_socks", () -> new FoxSocksItem(
-            Fox.CC.PURPLE,
-            Fox.CC.NONE,
+    public static final HashMap<String, RegistryObject<FoxClothingItem>> FOX_SOCKS = new HashMap<String, RegistryObject<FoxClothingItem>>() {{
+        Fox.CC.loopThrough((Fox.CC cc) -> {
+            if (cc == Fox.CC.NONE) return;
+            put(cc.getName(), ITEMS.register(cc.getName() + "_socks", () -> new FoxClothingItem(
+                    new Fox.CC[]{cc},
+                    "socks",
+                    new Item.Properties()
+                            .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES_SOCKS)
+                            .stacksTo(16)
+            )));
+
+            Fox.CC.loopThrough((Fox.CC cc1) -> {
+                if (cc1 == Fox.CC.NONE || cc == cc1) return;
+                put(cc.getName() + "_" + cc1.getName(), ITEMS.register(cc.getName() + "_" + cc1.getName() + "_socks", () -> new FoxClothingItem(
+                        new Fox.CC[]{cc, cc1},
+                        "socks",
+                        new Item.Properties()
+                                .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES_SOCKS)
+                                .stacksTo(16)
+                )));
+            });
+        });
+    }};
+
+    public static final RegistryObject<Item> EYE_DROPS_REMOVER = ITEMS.register("eye_drop_remover", () -> new Item(
             new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
+                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES_EYE_DROPS)
                     .stacksTo(1)
     ));
 
-    public static final RegistryObject<Item> SOCKS_PURPLE_BLACK = ITEMS.register("purple_black_socks", () -> new FoxSocksItem(
-            Fox.CC.PURPLE,
-            Fox.CC.BLACK,
+    public static final HashMap<String, RegistryObject<FoxClothingItemTogglable>> EYE_DROPS = new HashMap<String, RegistryObject<FoxClothingItemTogglable>>() {{
+        Fox.CC.loopThrough((Fox.CC cc) -> {
+            if (cc == Fox.CC.NONE) return;
+            put(cc.getName(), ITEMS.register(cc.getName() + "_eye_drops", () -> new FoxClothingItemTogglable(
+                    new Fox.CC[]{cc},
+                    "eye_drops",
+                    2,
+                    new Item.Properties()
+                            .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES_EYE_DROPS)
+                            .stacksTo(16)
+            )));
+        });
+    }};
+
+    public static final RegistryObject<Item> FUR_DYE_REMOVER = ITEMS.register("fur_dye_remover", () -> new Item(
             new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
+                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES_FUR_DYE)
                     .stacksTo(1)
     ));
 
-    public static final RegistryObject<Item> SOCKS_PURPLE_WHITE = ITEMS.register("purple_white_socks", () -> new FoxSocksItem(
-            Fox.CC.PURPLE,
-            Fox.CC.WHITE,
-            new Item.Properties()
-                    .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES)
-                    .stacksTo(1)
-    ));
+    public static final HashMap<String, RegistryObject<FoxClothingItemTogglable>> FUR_DYE = new HashMap<String, RegistryObject<FoxClothingItemTogglable>>() {{
+        Fox.CC.loopThrough((Fox.CC cc) -> {
+            if (cc == Fox.CC.NONE) return;
+            put(cc.getName(), ITEMS.register(cc.getName() + "_fur_dye", () -> new FoxClothingItemTogglable(
+                    new Fox.CC[]{cc},
+                    "fur_dye",
+                    2,
+                    new Item.Properties()
+                            .tab(ModCreativeModeTab.NOT_ENOUGH_FOXES_FUR_DYE)
+                            .stacksTo(16)
+            )));
+        });
+    }};
 }

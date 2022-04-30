@@ -1,0 +1,6 @@
+{
+  "parent": "notenoughfoxes:item/template_fox_collar",
+  "textures": {
+    "layer1": "notenoughfoxes:item/socks/collar_stripes"
+  }
+}

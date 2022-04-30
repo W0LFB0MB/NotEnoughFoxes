@@ -3,13 +3,11 @@ package com.w0lfb0mb.notenoughfoxes.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.w0lfb0mb.notenoughfoxes.client.models.FoxModel;
-import com.w0lfb0mb.notenoughfoxes.client.renderer.layers.FoxCollarLayer;
-import com.w0lfb0mb.notenoughfoxes.client.renderer.layers.FoxSocksLayer;
+import com.w0lfb0mb.notenoughfoxes.client.renderer.layers.*;
 import com.w0lfb0mb.notenoughfoxes.notenoughfoxes;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import com.w0lfb0mb.notenoughfoxes.client.renderer.layers.FoxHeldItemLayer;
 import net.minecraft.resources.ResourceLocation;
 import com.w0lfb0mb.notenoughfoxes.common.entity.Fox;
 import net.minecraft.util.Mth;
@@ -26,7 +24,6 @@ public class FoxRenderer extends MobRenderer<Fox, FoxModel<Fox>> {
     private static final ResourceLocation SILVER_FOX_SLEEP_TEXTURE = new ResourceLocation(notenoughfoxes.MODID, "textures/entity/fox/silver_fox_sleep.png");
     private static final ResourceLocation BLACK_FOX_TEXTURE = new ResourceLocation(notenoughfoxes.MODID, "textures/entity/fox/black_fox.png");
     private static final ResourceLocation BLACK_FOX_SLEEP_TEXTURE = new ResourceLocation(notenoughfoxes.MODID, "textures/entity/fox/black_fox_sleep.png");
-
     private static final ResourceLocation PLUM_FOX_TEXTURE = new ResourceLocation(notenoughfoxes.MODID, "textures/entity/fox/plum_fox.png");
     private static final ResourceLocation PLUM_FOX_SLEEP_TEXTURE = new ResourceLocation(notenoughfoxes.MODID, "textures/entity/fox/plum_fox_sleep.png");
     private static final ResourceLocation TREED0M_FOX_TEXTURE = new ResourceLocation(notenoughfoxes.MODID, "textures/entity/fox/treed0m_fox.png");
@@ -37,8 +34,10 @@ public class FoxRenderer extends MobRenderer<Fox, FoxModel<Fox>> {
     public FoxRenderer(EntityRendererProvider.Context p_174127_) {
         super(p_174127_, new FoxModel<>(p_174127_.bakeLayer(new ModelLayerLocation(new ResourceLocation(notenoughfoxes.MODID, "fox"), "main"))), 0.4F);
         this.addLayer(new FoxHeldItemLayer(this));
+        this.addLayer(new FoxFurLayer(this));
         this.addLayer(new FoxCollarLayer(this));
         this.addLayer(new FoxSocksLayer(this));
+        this.addLayer(new FoxEyeLayer(this));
     }
 
     protected void setupRotations(Fox p_114738_, PoseStack p_114739_, float p_114740_, float p_114741_, float p_114742_) {

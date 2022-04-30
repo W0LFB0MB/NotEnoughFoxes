@@ -1,0 +1,6 @@
+{
+  "parent": "notenoughfoxes:item/eye_drops",
+  "textures": {
+    "layer1": "notenoughfoxes:item/overlay/item_right"
+  }
+ }

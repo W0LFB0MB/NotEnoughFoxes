@@ -2,15 +2,22 @@ package com.w0lfb0mb.notenoughfoxes;
 
 import com.mojang.logging.LogUtils;
 import com.w0lfb0mb.notenoughfoxes.common.entity.Fox;
+import com.w0lfb0mb.notenoughfoxes.common.items.FoxClothingItem;
+import com.w0lfb0mb.notenoughfoxes.common.items.FoxClothingItemTogglable;
 import com.w0lfb0mb.notenoughfoxes.init.EntityInit;
 import com.w0lfb0mb.notenoughfoxes.init.ItemInit;
 import com.w0lfb0mb.notenoughfoxes.init.ParticleInit;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 import java.util.Random;
@@ -33,6 +40,7 @@ public class notenoughfoxes
 
 
         MinecraftForge.EVENT_BUS.addListener(this::entityJoinEvent);
+        MinecraftForge.EVENT_BUS.addListener(this::doClientStuff);
     }
 
     private void entityJoinEvent (EntityJoinWorldEvent event) {
@@ -58,5 +66,26 @@ public class notenoughfoxes
             entity.remove(Entity.RemovalReason.DISCARDED);
             world.addFreshEntity(fox);
         }
+    }
+
+    private void doClientStuff(final FMLClientSetupEvent event) {
+//        event.enqueueWork(() ->
+//        {
+//            for (RegistryObject<FoxClothingItemTogglable> itemregistry : ItemInit.FUR_DYE.values()) {
+//                FoxClothingItemTogglable item = itemregistry.get();
+//
+//                ItemProperties.register(item, new ResourceLocation(notenoughfoxes.MODID, "mode"), (stack, level, living, id) -> {
+////                        FoxClothingItemTogglable fcit = (FoxClothingItemTogglable) stack.getItem();
+////                        return fcit.getMode();
+////                            if (living == null) {
+////                                return 0;
+////                            } else {
+////                                return living.getUseItem() != stack ? 0 : 1;
+////                            }
+//                        return stack.getOrCreateTag().getInt("mode");
+//                    }
+//                );
+//            }
+//        });
     }
 }

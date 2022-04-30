@@ -13,11 +13,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
-import com.w0lfb0mb.notenoughfoxes.common.FoxCollarItem;
-import com.w0lfb0mb.notenoughfoxes.common.FoxSocksItem;
 import com.w0lfb0mb.notenoughfoxes.common.TamableFox;
 import com.w0lfb0mb.notenoughfoxes.common.goals.FoxFollowOwnerGoal;
 import com.w0lfb0mb.notenoughfoxes.common.goals.SleepWhenOrderedToGoal;
+import com.w0lfb0mb.notenoughfoxes.common.items.FoxClothingItem;
+import com.w0lfb0mb.notenoughfoxes.common.items.FoxClothingItemTogglable;
 import com.w0lfb0mb.notenoughfoxes.init.EntityInit;
 import com.w0lfb0mb.notenoughfoxes.init.ItemInit;
 import com.w0lfb0mb.notenoughfoxes.init.ParticleInit;
@@ -103,8 +103,13 @@ public class Fox extends TamableFox {
     private static final EntityDataAccessor<Optional<UUID>> DATA_TRUSTED_ID_1 = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.OPTIONAL_UUID);
 
     private static final EntityDataAccessor<Integer> DATA_COLLAR_ID = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_COLLAR_STRIPES_ID = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_SOCKS_ID = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_SOCKS_STRIPES_ID = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_TOP_FUR_COLOR_ID = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_BOTTOM_FUR_COLOR_ID = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_LEFT_EYE_COLOR_ID = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_RIGHT_EYE_COLOR_ID = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.INT);
 
     static final Predicate<ItemEntity> ALLOWED_ITEMS = (p_28528_) -> {
         return !p_28528_.hasPickUpDelay() && p_28528_.isAlive();
@@ -149,8 +154,13 @@ public class Fox extends TamableFox {
         this.entityData.define(DATA_TYPE_ID, 0);
         this.entityData.define(DATA_FLAGS_ID, (byte)0);
         this.entityData.define(DATA_COLLAR_ID, 0);
+        this.entityData.define(DATA_COLLAR_STRIPES_ID, 0);
         this.entityData.define(DATA_SOCKS_ID, 0);
         this.entityData.define(DATA_SOCKS_STRIPES_ID, 0);
+        this.entityData.define(DATA_TOP_FUR_COLOR_ID, 0);
+        this.entityData.define(DATA_BOTTOM_FUR_COLOR_ID, 0);
+        this.entityData.define(DATA_LEFT_EYE_COLOR_ID, 0);
+        this.entityData.define(DATA_RIGHT_EYE_COLOR_ID, 0);
     }
 
     protected void registerGoals() {
@@ -199,14 +209,18 @@ public class Fox extends TamableFox {
     public InteractionResult mobInteract(Player player, InteractionHand p_30413_) {
         ItemStack itemstack = player.getItemInHand(p_30413_);
         Item item = itemstack.getItem();
-        Tuple<Boolean, Fox.CC> isCollar = isCollar(item);
-        Tuple<Boolean, Tuple<Fox.CC, Fox.CC>> isSocks = isSocks(item);
+        Tuple<Boolean, Fox.CC[]> isCollar = isCollar(item);
+        Tuple<Boolean, Fox.CC[]> isSocks = isSocks(item);
+        Tuple<Boolean, Fox.CC[]> isDye = isDye(item);
+        Tuple<Boolean, Fox.CC[]> isEyeDrops = isEyeDrops(item);
         if (this.level.isClientSide) {
             boolean flag = this.isOwnedBy(player) ||
                     this.isTame() ||
                     (itemstack.is(Items.CHICKEN) && !this.isTame() && !this.isDefending()) ||
                     isCollar.getA() ||
-                    isSocks.getA();
+                    isSocks.getA() ||
+                    isDye.getA() ||
+                    isEyeDrops.getA();
 
             return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
         } else {
@@ -221,21 +235,57 @@ public class Fox extends TamableFox {
                     return InteractionResult.SUCCESS;
                 }
 
-                if (isCollar.getA() || isSocks.getA()) {
+                if (isCollar.getA() || isSocks.getA() || isDye.getA() || isEyeDrops.getA()) {
                     if (isCollar.getA()) {
                         if (this.getCollar() != CC.NONE && !player.isCreative())
-                            this.dropItemStack(new ItemStack(this.CollarFromCC(this.getCollar()).getB()));
+                            this.dropItemStack(new ItemStack(this.CollarFromCC(this.getCollar(), this.getCollar()).getB()));
 
-                        this.setCollar(((FoxCollarItem) item).getColor());
+                        this.setCollar(isCollar.getB()[0]);
+                        if (isCollar.getB().length == 2) this.setCollarStripes(isCollar.getB()[1]);
                     } else if (isSocks.getA()) {
                         if (this.getSocks() != CC.NONE && !player.isCreative())
                             this.dropItemStack(new ItemStack(this.SocksFromCC(this.getSocks(), this.getSocksStripes()).getB()));
 
-                        this.setSocks(isSocks.getB().getA());
-                        this.setSocksStripes(isSocks.getB().getB());
+                        this.setSocks(isSocks.getB()[0]);
+                        if (isSocks.getB().length == 2) this.setSocksStripes(isSocks.getB()[1]);
+                    } else if (isDye.getA()) {
+                        CompoundTag tag = itemstack.getTag();
+                        if (tag == null || !tag.contains("mode")) {
+                            this.setLeftEye(isEyeDrops.getB()[0]);
+                            this.setRightEye(isEyeDrops.getB()[0]);
+                        } else {
+                            int mode = tag.getInt("mode");
+
+                            if (mode == 0) {
+                                this.setTopFur(isDye.getB()[0]);
+                                this.setBottomFur(isDye.getB()[0]);
+                            } else if (mode == 1) {
+                                this.setTopFur(isDye.getB()[0]);
+                            } else if (mode == 2) {
+                                this.setBottomFur(isDye.getB()[0]);
+                            }
+                        }
+                    } else if (isEyeDrops.getA()) {
+                        CompoundTag tag = itemstack.getTag();
+                        if (tag == null || !tag.contains("mode")) {
+                            this.setLeftEye(isEyeDrops.getB()[0]);
+                            this.setRightEye(isEyeDrops.getB()[0]);
+                        } else {
+                            int mode = tag.getInt("mode");
+
+                            if (mode == 0) {
+                                this.setLeftEye(isEyeDrops.getB()[0]);
+                                this.setRightEye(isEyeDrops.getB()[0]);
+                            } else if (mode == 1) {
+                                this.setLeftEye(isEyeDrops.getB()[0]);
+                            } else if (mode == 2) {
+                                this.setRightEye(isEyeDrops.getB()[0]);
+                            }
+                        }
                     }
 
                     if (item != ItemInit.SOCK_REMOVER.get() && item != ItemInit.COLLAR_REMOVER.get()) itemstack.shrink(1);
+
                     return InteractionResult.SUCCESS;
                 }
 
@@ -267,7 +317,9 @@ public class Fox extends TamableFox {
 
                     this.jumping = false;
                     this.navigation.stop();
+
                     this.setTarget((LivingEntity) null);
+
                     return InteractionResult.SUCCESS;
                 }
 
@@ -480,6 +532,14 @@ public class Fox extends TamableFox {
         this.entityData.set(DATA_COLLAR_ID, p_28465_.getId());
     }
 
+    public Fox.CC getCollarStripes() {
+        return Fox.CC.byId(this.entityData.get(DATA_COLLAR_STRIPES_ID));
+    }
+
+    private void setCollarStripes(Fox.CC p_28465_) {
+        this.entityData.set(DATA_COLLAR_STRIPES_ID, p_28465_.getId());
+    }
+
     public Fox.CC getSocks() {
         return Fox.CC.byId(this.entityData.get(DATA_SOCKS_ID));
     }
@@ -494,6 +554,38 @@ public class Fox extends TamableFox {
 
     private void setSocksStripes(Fox.CC p_28465_) {
         this.entityData.set(DATA_SOCKS_STRIPES_ID, p_28465_.getId());
+    }
+
+    public Fox.CC getLeftEye() {
+        return Fox.CC.byId(this.entityData.get(DATA_LEFT_EYE_COLOR_ID));
+    }
+
+    private void setLeftEye(Fox.CC p_28465_) {
+        this.entityData.set(DATA_LEFT_EYE_COLOR_ID, p_28465_.getId());
+    }
+
+    public Fox.CC getRightEye() {
+        return Fox.CC.byId(this.entityData.get(DATA_RIGHT_EYE_COLOR_ID));
+    }
+
+    private void setRightEye(Fox.CC p_28465_) {
+        this.entityData.set(DATA_RIGHT_EYE_COLOR_ID, p_28465_.getId());
+    }
+
+    public Fox.CC getTopFur() {
+        return Fox.CC.byId(this.entityData.get(DATA_TOP_FUR_COLOR_ID));
+    }
+
+    private void setTopFur(Fox.CC p_28465_) {
+        this.entityData.set(DATA_TOP_FUR_COLOR_ID, p_28465_.getId());
+    }
+
+    public Fox.CC getBottomFur() {
+        return Fox.CC.byId(this.entityData.get(DATA_BOTTOM_FUR_COLOR_ID));
+    }
+
+    private void setBottomFur(Fox.CC p_28465_) {
+        this.entityData.set(DATA_BOTTOM_FUR_COLOR_ID, p_28465_.getId());
     }
 
     List<UUID> getTrustedUUIDs() {
@@ -531,6 +623,11 @@ public class Fox extends TamableFox {
         p_28518_.putInt("Socks", this.getSocks().getId());
         p_28518_.putInt("SocksStripes", this.getSocksStripes().getId());
         p_28518_.putInt("Collar", this.getCollar().getId());
+        p_28518_.putInt("CollarStripes", this.getCollarStripes().getId());
+        p_28518_.putInt("LeftEye", this.getLeftEye().getId());
+        p_28518_.putInt("RightEye", this.getRightEye().getId());
+        p_28518_.putInt("TopFur", this.getTopFur().getId());
+        p_28518_.putInt("BottomFur", this.getBottomFur().getId());
     }
 
     public void readAdditionalSaveData(CompoundTag p_28493_) {
@@ -548,6 +645,12 @@ public class Fox extends TamableFox {
         this.setSocks(CC.byId(p_28493_.getInt("Socks")));
         this.setSocksStripes(CC.byId(p_28493_.getInt("SocksStripes")));
         this.setCollar(CC.byId(p_28493_.getInt("Collar")));
+        this.setCollarStripes(CC.byId(p_28493_.getInt("CollarStripes")));
+        this.setLeftEye(CC.byId(p_28493_.getInt("LeftEye")));
+        this.setRightEye(CC.byId(p_28493_.getInt("RightEye")));
+        this.setTopFur(CC.byId(p_28493_.getInt("TopFur")));
+        this.setBottomFur(CC.byId(p_28493_.getInt("BottomFur")));
+
         if (this.level instanceof ServerLevel) {
             this.setTargetGoals();
         }
@@ -1337,6 +1440,10 @@ public class Fox extends TamableFox {
             }
         }
 
+        public boolean canContinueToUse() {
+            return Fox.this.canMove();
+        }
+
         public void tick() {
             List<ItemEntity> list = Fox.this.level.getEntitiesOfClass(ItemEntity.class, Fox.this.getBoundingBox().inflate(8.0D, 8.0D, 8.0D), Fox.ALLOWED_ITEMS);
             ItemStack itemstack = Fox.this.getItemBySlot(EquipmentSlot.MAINHAND);
@@ -1597,135 +1704,67 @@ public class Fox extends TamableFox {
         }
     }
 
-    public static Tuple<Boolean, CC> isCollar(Item item) {
-        if (item instanceof FoxCollarItem) return new Tuple<>(true, ((FoxCollarItem) item).getColor());
-        if (item == ItemInit.COLLAR_REMOVER.get()) return new Tuple<>(true, CC.NONE);
-        return new Tuple<>(false, CC.NONE);
+    public static Tuple<Boolean, CC[]> isCollar(Item item) {
+        if (item == ItemInit.COLLAR_REMOVER.get()) return new Tuple<>(true, new CC[]{CC.NONE});
+        if (!(item instanceof FoxClothingItem)) return new Tuple<>(false, new CC[]{CC.NONE});
+        if (((FoxClothingItem) item).getClothingName() != "collar") return new Tuple<>(false, new CC[]{CC.NONE});
+
+        return new Tuple<>(true, ((FoxClothingItem) item).getColors());
 
     }
 
-    public static Tuple<Boolean, Tuple<CC, CC>> isSocks(Item item) {
-        if (item instanceof FoxSocksItem) return new Tuple<>(true, new Tuple<>(((FoxSocksItem) item).getColor(), ((FoxSocksItem) item).getStripesColor()));
-        if (item == ItemInit.SOCK_REMOVER.get()) return new Tuple<>(true, new Tuple<>(CC.NONE, CC.NONE));
-        return new Tuple<>(false, new Tuple<>(CC.NONE, CC.NONE));
+    public static Tuple<Boolean, CC[]> isSocks(Item item) {
+        if (item == ItemInit.SOCK_REMOVER.get()) return new Tuple<>(true, new CC[]{CC.NONE});
+        if (!(item instanceof FoxClothingItem)) return new Tuple<>(false, new CC[]{CC.NONE});
+        if (((FoxClothingItem) item).getClothingName() != "socks") return new Tuple<>(false, new CC[]{CC.NONE});
+
+        return new Tuple<>(true, ((FoxClothingItem) item).getColors());
     }
 
-    private Tuple<Boolean, Item> CollarFromCC(CC cc) {
-        switch(cc) {
-            case NONE -> {
-                return new Tuple<>(false, null);
-            }
-            case PURPLE -> {
-                return new Tuple<>(true, ItemInit.COLLAR_PURPLE.get());
-            }
-            case WHITE -> {
-                return new Tuple<>(true, ItemInit.COLLAR_WHITE.get());
-            }
-            case ORANGE -> {
-                return new Tuple<>(true, ItemInit.COLLAR_ORANGE.get());
-            }
-            case MAGENTA -> {
-                return new Tuple<>(true, ItemInit.COLLAR_MAGENTA.get());
-            }
-            case LIGHT_BLUE -> {
-                return new Tuple<>(true, ItemInit.COLLAR_LIGHT_BLUE.get());
-            }
-            case YELLOW -> {
-                return new Tuple<>(true, ItemInit.COLLAR_YELLOW.get());
-            }
-            case LIME -> {
-                return new Tuple<>(true, ItemInit.COLLAR_LIME.get());
-            }
-            case PINK -> {
-                return new Tuple<>(true, ItemInit.COLLAR_PINK.get());
-            }
-            case GRAY -> {
-                return new Tuple<>(true, ItemInit.COLLAR_GRAY.get());
-            }
-            case LIGHT_GRAY -> {
-                return new Tuple<>(true, ItemInit.COLLAR_LIGHT_GRAY.get());
-            }
-            case CYAN -> {
-                return new Tuple<>(true, ItemInit.COLLAR_CYAN.get());
-            }
-            case BLUE -> {
-                return new Tuple<>(true, ItemInit.COLLAR_BLUE.get());
-            }
-            case BROWN -> {
-                return new Tuple<>(true, ItemInit.COLLAR_BROWN.get());
-            }
-            case GREEN -> {
-                return new Tuple<>(true, ItemInit.COLLAR_GREEN.get());
-            }
-            case RED -> {
-                return new Tuple<>(true, ItemInit.COLLAR_RED.get());
-            }
-            case BLACK -> {
-                return new Tuple<>(true, ItemInit.COLLAR_BLACK.get());
-            }
-        }
+    public static Tuple<Boolean, CC[]> isDye(Item item) {
+        if (item == ItemInit.FUR_DYE_REMOVER.get()) return new Tuple<>(true, new CC[]{CC.NONE});
+        if (!(item instanceof FoxClothingItemTogglable)) return new Tuple<>(false, new CC[]{CC.NONE});
+        if (((FoxClothingItemTogglable) item).getClothingName() != "fur_dye") return new Tuple<>(false, new CC[]{CC.NONE});
 
-        return new Tuple<>(false, null);
+        return new Tuple<>(true, ((FoxClothingItemTogglable) item).getColors());
     }
+    public static Tuple<Boolean, CC[]> isEyeDrops(Item item) {
+        if (item == ItemInit.EYE_DROPS_REMOVER.get()) return new Tuple<>(true, new CC[]{CC.NONE});
+        if (!(item instanceof FoxClothingItemTogglable)) return new Tuple<>(false, new CC[]{CC.NONE});
+        if (((FoxClothingItemTogglable) item).getClothingName() != "eye_drops") return new Tuple<>(false, new CC[]{CC.NONE});
+
+        return new Tuple<>(true, ((FoxClothingItemTogglable) item).getColors());
+    }
+
 
     private Tuple<Boolean, Item> SocksFromCC(CC basecc, CC stripescc) {
-        switch(basecc) {
-            case NONE -> {
-                return new Tuple<>(false, null);
-            }
-            case PURPLE -> {
-                if (stripescc == CC.NONE) return new Tuple<>(true, ItemInit.SOCKS_PURPLE.get());
-                if (stripescc == CC.BLACK) return new Tuple<>(true, ItemInit.SOCKS_PURPLE_BLACK.get());
-                if (stripescc == CC.WHITE) return new Tuple<>(true, ItemInit.SOCKS_PURPLE_WHITE.get());
-            }
-            case WHITE -> {
-                return new Tuple<>(true, ItemInit.COLLAR_WHITE.get());
-            }
-            case ORANGE -> {
-                return new Tuple<>(true, ItemInit.COLLAR_ORANGE.get());
-            }
-            case MAGENTA -> {
-                return new Tuple<>(true, ItemInit.COLLAR_MAGENTA.get());
-            }
-            case LIGHT_BLUE -> {
-                return new Tuple<>(true, ItemInit.COLLAR_LIGHT_BLUE.get());
-            }
-            case YELLOW -> {
-                return new Tuple<>(true, ItemInit.COLLAR_YELLOW.get());
-            }
-            case LIME -> {
-                return new Tuple<>(true, ItemInit.COLLAR_LIME.get());
-            }
-            case PINK -> {
-                return new Tuple<>(true, ItemInit.COLLAR_PINK.get());
-            }
-            case GRAY -> {
-                return new Tuple<>(true, ItemInit.COLLAR_GRAY.get());
-            }
-            case LIGHT_GRAY -> {
-                return new Tuple<>(true, ItemInit.COLLAR_LIGHT_GRAY.get());
-            }
-            case CYAN -> {
-                return new Tuple<>(true, ItemInit.COLLAR_CYAN.get());
-            }
-            case BLUE -> {
-                return new Tuple<>(true, ItemInit.COLLAR_BLUE.get());
-            }
-            case BROWN -> {
-                return new Tuple<>(true, ItemInit.COLLAR_BROWN.get());
-            }
-            case GREEN -> {
-                return new Tuple<>(true, ItemInit.COLLAR_GREEN.get());
-            }
-            case RED -> {
-                return new Tuple<>(true, ItemInit.COLLAR_RED.get());
-            }
-            case BLACK -> {
-                return new Tuple<>(true, ItemInit.COLLAR_BLACK.get());
-            }
+        if (basecc == CC.NONE) return new Tuple<>(false, null);
+
+        String socksName;
+        if (basecc == stripescc) {
+            socksName = basecc.getName();
+        } else {
+            socksName = basecc.getName() + "_" + stripescc.getName();
         }
 
-        return new Tuple<>(false, null);
+        if (!ItemInit.FOX_SOCKS.containsKey(socksName)) return new Tuple<>(false, null);
+
+        return new Tuple<>(false, ItemInit.FOX_SOCKS.get(socksName).get());
+    }
+
+    private Tuple<Boolean, Item> CollarFromCC(CC basecc, CC stripescc) {
+        if (basecc == CC.NONE) return new Tuple<>(false, null);
+
+        String collarName;
+        if (basecc == stripescc) {
+            collarName = basecc.getName();
+        } else {
+            collarName = basecc.getName() + "_" + stripescc.getName();
+        }
+
+        if (!ItemInit.FOX_COLLARS.containsKey(collarName)) return new Tuple<>(false, null);
+
+        return new Tuple<>(false, ItemInit.FOX_COLLARS.get(collarName).get());
     }
 
     public static enum CC {
@@ -1736,7 +1775,7 @@ public class Fox extends TamableFox {
         MAGENTA(4, "magenta", DyeColor.MAGENTA.getFireworkColor()),
         LIGHT_BLUE(5, "light_blue", DyeColor.LIGHT_BLUE.getFireworkColor()),
         YELLOW(6, "yellow", DyeColor.YELLOW.getFireworkColor()),
-        LIME(7, "lime", DyeColor.YELLOW.getFireworkColor()),
+        LIME(7, "lime", DyeColor.LIME.getFireworkColor()),
         PINK(8, "pink", DyeColor.PINK.getFireworkColor()),
         GRAY(9, "gray", DyeColor.GRAY.getFireworkColor()),
         LIGHT_GRAY(10, "light_gray", DyeColor.LIGHT_GRAY.getFireworkColor()),
@@ -1794,6 +1833,15 @@ public class Fox extends TamableFox {
         }
 
         public int getColorInt() { return this.colorInt; }
+
+        public interface Callback {
+            void call(Fox.CC cc);
+        }
+        public static void loopThrough(Callback callback) {
+            for (Fox.CC cc : Fox.CC.values()) {
+                callback.call(cc);
+            }
+        }
     }
 }
 

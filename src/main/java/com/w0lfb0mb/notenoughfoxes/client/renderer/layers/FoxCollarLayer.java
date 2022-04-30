@@ -13,6 +13,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class FoxCollarLayer extends RenderLayer<Fox, FoxModel<Fox>> {
    private static final ResourceLocation FOX_COLLAR_LOCATION = new ResourceLocation(notenoughfoxes.MODID, "textures/entity/fox/fox_collar.png");
+   private static final ResourceLocation FOX_COLLAR_STRIPES_LOCATION = new ResourceLocation(notenoughfoxes.MODID, "textures/entity/fox/fox_collar_stripes.png");
 
    public FoxCollarLayer(RenderLayerParent<Fox, FoxModel<Fox>> p_117707_) {
       super(p_117707_);
@@ -22,6 +23,11 @@ public class FoxCollarLayer extends RenderLayer<Fox, FoxModel<Fox>> {
       if (fox.isTame() && !fox.isInvisible() && fox.getCollar() != Fox.CC.NONE) {
          float[] afloat = fox.getCollar().getColor();
          renderColoredCutoutModel(this.getParentModel(), FOX_COLLAR_LOCATION, p_117720_, p_117721_, p_117722_, fox, afloat[0], afloat[1], afloat[2]);
+
+         if (fox.getCollarStripes() != Fox.CC.NONE) {
+            float[] bfloat = fox.getCollarStripes().getColor();
+            renderColoredCutoutModel(this.getParentModel(), FOX_COLLAR_STRIPES_LOCATION, p_117720_, p_117721_, p_117722_, fox, bfloat[0], bfloat[1], bfloat[2]);
+         }
       }
    }
 }

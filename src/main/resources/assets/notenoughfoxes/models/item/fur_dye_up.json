@@ -1,0 +1,6 @@
+{
+  "parent": "notenoughfoxes:item/fur_dye",
+  "textures": {
+    "layer1": "notenoughfoxes:item/overlay/item_up"
+  }
+ }

@@ -1,0 +1,17 @@
+{
+  "parent": "notenoughfoxes:item/fur_dye",
+  "overrides": [
+    {
+      "predicate": {
+        "notenoughfoxes:mode": 1.0
+      },
+      "model": "notenoughfoxes:item/fur_dye_up"
+    },
+    {
+      "predicate": {
+        "notenoughfoxes:mode": 2.0
+      },
+      "model": "notenoughfoxes:item/fur_dye_down"
+    }
+  ]
+}
