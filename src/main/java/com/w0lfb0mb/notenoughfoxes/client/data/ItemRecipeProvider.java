@@ -45,7 +45,7 @@ public class ItemRecipeProvider extends RecipeProvider {
                 .pattern("  g")
                 .pattern(" g ")
                 .pattern("g  ")
-                .define('g', Items.GLASS)
+                .define('g', Items.GREEN_DYE)
                 .unlockedBy("has_green_dye", has(Items.GREEN_DYE))
                 .save(consumer);
 
