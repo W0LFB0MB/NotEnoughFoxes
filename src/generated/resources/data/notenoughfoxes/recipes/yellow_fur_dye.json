@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "dd",
+    "dd"
+  ],
+  "key": {
+    "d": {
+      "item": "minecraft:yellow_dye"
+    }
+  },
+  "result": {
+    "item": "notenoughfoxes:yellow_fur_dye"
+  }
+}

@@ -1,6 +1,7 @@
 package com.w0lfb0mb.notenoughfoxes.client.event;
 
 import com.w0lfb0mb.notenoughfoxes.client.data.ItemModelProvider;
+import com.w0lfb0mb.notenoughfoxes.client.data.ItemRecipeProvider;
 import com.w0lfb0mb.notenoughfoxes.client.renderer.FoxRenderer;
 import com.w0lfb0mb.notenoughfoxes.common.ModCreativeModeTab;
 import com.w0lfb0mb.notenoughfoxes.common.items.FoxClothingItem;
@@ -56,6 +57,7 @@ public final class ClientModEvents {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
         gen.addProvider(new ItemModelProvider(gen, existingFileHelper));
+        gen.addProvider(new ItemRecipeProvider(gen));
     }
 
     @SubscribeEvent

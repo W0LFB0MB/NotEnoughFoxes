@@ -251,8 +251,8 @@ public class Fox extends TamableFox {
                     } else if (isDye.getA()) {
                         CompoundTag tag = itemstack.getTag();
                         if (tag == null || !tag.contains("mode")) {
-                            this.setLeftEye(isEyeDrops.getB()[0]);
-                            this.setRightEye(isEyeDrops.getB()[0]);
+                            this.setTopFur(isDye.getB()[0]);
+                            this.setBottomFur(isDye.getB()[0]);
                         } else {
                             int mode = tag.getInt("mode");
 

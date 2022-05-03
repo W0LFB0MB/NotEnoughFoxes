@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  i",
+    " d ",
+    "i  "
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "d": {
+      "item": "minecraft:magenta_dye"
+    }
+  },
+  "result": {
+    "item": "notenoughfoxes:magenta_eye_drops"
+  }
+}

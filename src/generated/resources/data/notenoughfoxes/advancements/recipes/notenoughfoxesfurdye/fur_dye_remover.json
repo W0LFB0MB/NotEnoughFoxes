@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "notenoughfoxes:fur_dye_remover"
+    ]
+  },
+  "criteria": {
+    "has_white_dye": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:white_dye"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "notenoughfoxes:fur_dye_remover"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_white_dye",
+      "has_the_recipe"
+    ]
+  ]
+}

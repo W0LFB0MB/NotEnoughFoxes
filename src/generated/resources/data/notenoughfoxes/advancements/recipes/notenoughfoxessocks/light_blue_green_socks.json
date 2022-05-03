@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "notenoughfoxes:light_blue_green_socks"
+    ]
+  },
+  "criteria": {
+    "has_collar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "notenoughfoxes:light_blue_socks"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "notenoughfoxes:light_blue_green_socks"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_collar",
+      "has_the_recipe"
+    ]
+  ]
+}

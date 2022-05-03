@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "notenoughfoxes:brown_magenta_collar"
+    ]
+  },
+  "criteria": {
+    "has_collar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "notenoughfoxes:brown_collar"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "notenoughfoxes:brown_magenta_collar"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_collar",
+      "has_the_recipe"
+    ]
+  ]
+}

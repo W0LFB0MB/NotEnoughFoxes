@@ -23,6 +23,24 @@ public class FoxClothingItem extends Item {
 
     private static final List<FoxClothingItem> CLOTHING_ITEMS = new ArrayList<>();
 
+    public static final FoxClothingItem getFromCC(Fox.CC[] ccs) {
+        for (FoxClothingItem item : CLOTHING_ITEMS) {
+            if (item.getColors().length != ccs.length) continue;
+            boolean isIdentical = true;
+
+            for (int i = 0; i < item.getColors().length; i++) {
+                if (item.getColors()[i] != ccs[i]) {
+                    isIdentical = false;
+                    break;
+                }
+            }
+
+            if (isIdentical) return item;
+        }
+
+        return null;
+    }
+
     public FoxClothingItem(Fox.CC[] colors, String clothingName, Properties properties) {
         super(properties);
         this.colors = colors;

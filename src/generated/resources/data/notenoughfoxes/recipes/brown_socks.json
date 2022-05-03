@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ss ",
+    "ssd",
+    "ss "
+  ],
+  "key": {
+    "s": {
+      "item": "minecraft:string"
+    },
+    "d": {
+      "item": "minecraft:brown_dye"
+    }
+  },
+  "result": {
+    "item": "notenoughfoxes:brown_socks"
+  }
+}

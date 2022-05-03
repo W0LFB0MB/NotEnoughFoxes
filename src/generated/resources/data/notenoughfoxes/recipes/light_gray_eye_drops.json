@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  i",
+    " d ",
+    "i  "
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "d": {
+      "item": "minecraft:light_gray_dye"
+    }
+  },
+  "result": {
+    "item": "notenoughfoxes:light_gray_eye_drops"
+  }
+}

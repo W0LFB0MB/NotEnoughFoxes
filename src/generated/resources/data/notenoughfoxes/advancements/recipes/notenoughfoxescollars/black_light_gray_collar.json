@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "notenoughfoxes:black_light_gray_collar"
+    ]
+  },
+  "criteria": {
+    "has_collar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "notenoughfoxes:black_collar"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "notenoughfoxes:black_light_gray_collar"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_collar",
+      "has_the_recipe"
+    ]
+  ]
+}
